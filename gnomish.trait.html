@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030305;15102200">
+	
+  <meta name="CHANGED" content="20030305;16491600">
+	
+  <style>
+	<!--
+		@page { margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		P { margin-bottom: 0.21cm }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+<h1><font face="Arial"><font size="4">Gnomish::Trait</font></font></h1>
+<p>An internal class to encapsulate Traits.</p>
+<p><br>
+<br>
+</p>
+<p><b>makeTrait</b></p>
+<p style="">Initialize the trait with the provided properties.  Traits
+are created with a 'TraitAlleleEffects' table that encodes how a locus
+state translate to a genotypic effect.  The table is encoded in the
+same way that the 'marker coding' table is created in Gnomish::Markers.
+For example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$traitAlleleEffects {locus}{locus_state} = trait_effect;</p>
+<p style="">Or more specifically:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my
+%traitAlleleEffects;<br>
+&nbsp;&nbsp;&nbsp; $traitAlleleEffects {3}{AA} = 4.5;<br>
+&nbsp;&nbsp;&nbsp; $traitAlleleEffects{3}{aA} = 1;<br>
+&nbsp;&nbsp;&nbsp; $traitAlleleEffects{5}{aa} = 2;</p>
+<p style="">(See the documentation for Gnomish::Genome::addTrait for
+more documentation.)</p>
+<p style=""><b>NOTE: </b>this exposes the internal data structure of
+the marker coding (if the table is created incorrectly, it will result
+in unpredictable behaviour by the script.)  We should create new
+routines to hide this encoding from the end-user interface.</p>
+<p><b>Also, the creation of new traits in a simulation should be done
+through the Gnomish::Genome::addTrait class method.</b></p>
+<p style="">Parameters:</p>
+<ul>
+	<li>
+    <p style="">String: Name</p>
+	</li>
+  <li>
+    <p style="">Float: TraitMean</p>
+	</li>
+  <li>
+    <p style="">Float: TraitVariance</p>
+	</li>
+  <li>
+    <p style="">HashTable: TraitAlleleEffects</p>
+	</li>
+  <li>
+    <p style="">String: AlleleSet 	</p>
+  </li>
+</ul>
+<p style=""><br>
+<br>
+</p>
+<p><b>setTraitAlleleEffects</b></p>
+<p style="">Set a new 'trait allele effects' table.  See above for
+formatting.</p>
+<p style="">Parameters:</p>
+<ul>
+	<li>
+    <p style="">HashTable: TraitAlleleEffects</p>
+  </li>
+</ul>
+<p style=""><br>
+<br>
+</p>
+<p><b>printTraitAlleleEffects</b></p>
+<p style="">Print the 'trait allele effects' table to the screen in
+ASCII.  This is here for debugging purposes.</p>
+<p style="">Parameters: none</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>getLocusEffects</b></p>
+<p style="">Return the hash of possible effect values at the locus. 
+The returned hash has keys that correspond to the allele state and
+values that correspond to the effect value.</p>
+<p style="">Parameters:</p>
+<ul>
+	<li>
+    <p style="">Int: Locus</p>
+  </li>
+</ul>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my
+%allele_effects;<br>
+&nbsp;&nbsp;&nbsp; $allele_effects {3}{aA} = 3;<br>
+&nbsp;&nbsp;&nbsp; $allele_effects {3}{aa} = 1;<br>
+&nbsp;&nbsp;&nbsp; $allele_effects {5}{aA} = 5;</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $trait = new
+Genome::Trait;<br>
+&nbsp;&nbsp;&nbsp; $trait-&gt;makeTrait ( Name =&gt; "test",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+TraitAlleleEffects =&gt; \%allele_effects<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleSet
+=&gt; "a,A" );</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my %locus_effects
+= $trait-&gt;getLocusEffects ( Locus =&gt; 3 );<br>
+</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; print
+$locus_effects{aA}, "\n";<br>
+&nbsp;&nbsp;&nbsp; print $locus_effects{aa}, "\n";</p>
+<p style="">	Output:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; 3</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; 1</p>
+<p style=""></p>
+<p style=""><br>
+	The returned table looks like:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$locus_effects{aA} = 3;<br>
+&nbsp;&nbsp;&nbsp; $locus_effects{aa} = 1;</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>getLocusEffectValue</b></p>
+<p style="">Get the effect value of a particular allele state at the
+given locus.</p>
+<p style="">Parameters:</p>
+<ul>
+	<li>
+    <p style="">Int: Locus</p>
+	</li>
+  <li>
+    <p style="">String: AlleleState</p>
+  </li>
+</ul>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $val =
+$trait-&gt;getLocusEffectValue ( Locus =&gt; 3,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleState =&gt; "aA" );</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>getActiveLoci</b></p>
+<p style="">Return an array of loci that effect the trait.</p>
+<p style="">Parameters: none</p>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my @loci =
+$trait-&gt;getActiveLoci();</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>setName</b></p>
+<p style="">Give the trait a new name.</p>
+<p style="">Parameters:</p>
+<p style="">String: Name</p>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$trait-&gt;setName ( Name =&gt; "NewTraitName" );</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>getName</b></p>
+<p style="">Return the name of the trait.</p>
+<p style="">Parameters: none</p>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $trait_name =
+$trait-&gt;getName();</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>getTraitVariance</b></p>
+<p style="">Return the variance of the trait.</p>
+<p style="">Parameters: none</p>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $variance =
+$trait-&gt;getTraitVariance();</p>
+<p style=""><br>
+<br>
+</p>
+<p><b>getTraitMean</b></p>
+<p style="">Return the trait mean value.</p>
+<p style="">Parameters: none</p>
+<p style="">Example:</p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $trait_mean =
+$trait-&gt;getTraitMean();</p>
+<p style=""><br>
+<br>
+</p>
+</body>
+</html>

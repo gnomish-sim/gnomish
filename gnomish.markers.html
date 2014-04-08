@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030304;16255700">
+	
+  <meta name="CHANGED" content="20030304;17524900">
+	
+  <style>
+	<!--
+		@page { margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		P { margin-bottom: 0.21cm }
+		P.western { font-family: "Helvetica", sans-serif; font-weight: medium }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+<p style="margin-top: 0.42cm; page-break-after: avoid;"> <font
+ face="Albany, sans-serif"><font size="4">Gnomish::Marker</font></font></p>
+<p class="western">An internal module for encapsulating markers.</p>
+<p class="western"><br>
+<br>
+</p>
+<p class="western"><b>makeMarker </b> </p>
+<p class="western" style="">Create a new marker list.  Markers are
+created with a 'marker coding' table that encodes how locus states
+translate into a marker label.  The table is simply a hash object and
+is encoded as follows:</p>
+<p class="western" style="font-family: monospace;">	$marker_coding
+{locus}{locus_state} = 'label';</p>
+<p class="western" style="">For example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my %marker_coding;<br>
+&nbsp;&nbsp;&nbsp; $marker_coding {3}{AA} = Z;<br>
+&nbsp;&nbsp;&nbsp; $marker_coding {5}{Aa} = W;</p>
+<p class="western" style=""><b>NOTE: </b>this exposes the internal
+data structure of the marker coding (if the table is created
+incorrectly, it will result in unpredictable behaviour by the script.) 
+We should create new routines to hide this encoding from the end-user
+interface.</p>
+<p class="western"><b>Also, the creation of new markers in a simulation
+should be done through the Gnomish::Genome::addMarker class method,
+instead of calls to this method.</b></p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">String: Name</p>
+	</li>
+  <li>
+    <p class="western" style="">MarkerCoding 	(reference to hash table
+with marker coding explained above)</p>
+	</li>
+  <li>
+    <p class="western" style="">AlleleSet (the 	allele set of the
+genome) 	</p>
+  </li>
+</ul>
+<br>
+<p class="western"><b>getMarkerCoding</b></p>
+<p class="western" style="">Return the marker label coding for a
+particular allele state at the specified locus.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Locus</p>
+	</li>
+  <li>
+    <p class="western" style="">String: 	AlleleState</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $marker_label = $marker-&gt;getMarkerCoding (<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Locus =&gt; 5,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; AlleleState =&gt; "aA" );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>getMarkerCodingForLocus</b><span style=""><br>
+Return a hash table of the marker codings for a given locus.</span></p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Locus</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my %marker_coding;<br>
+&nbsp;&nbsp;&nbsp; $marker_coding {3}{aA} = Z;<br>
+&nbsp;&nbsp;&nbsp; $marker_coding {3}{aa} = W;<br>
+&nbsp;&nbsp;&nbsp; $marker_coding {5}{aA} = T;</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $marker = new Genome::Marker;<br>
+&nbsp;&nbsp;&nbsp; $marker-&gt;makeMarker ( Name =&gt; "test",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+MarkerCoding =&gt; \%marker_coding,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+AlleleSet =&gt; "a,A" );</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my %locus_coding = $marker-&gt;getMarkingCodingForLocus ( Locus =&gt; 3
+);</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+print $locus_coding{aA}, "\n";<br>
+&nbsp;&nbsp;&nbsp; print $locus_coding{aa}, "\n";</p>
+<p class="western" style="">	Output:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp; Z</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp; W</p>
+<p class="western" style="font-family: monospace;"></p>
+<p class="western" style=""><br>
+	The returned table looks like:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$locus_coding{aA} = Z;<br>
+&nbsp;&nbsp;&nbsp; $locus_coding{aa} = W;</p>
+<p class="western" style="">	</p>
+<p class="western" style=""><br>
+<br>
+<br>
+<br>
+</p>
+</body>
+</html>

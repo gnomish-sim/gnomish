@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030227;14590100">
+	
+  <meta name="CHANGED" content="20030306;14282200">
+	
+  <style>
+	<!--
+		@page { margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		P { margin-bottom: 0.21cm }
+		H1 { margin-bottom: 0.21cm }
+		H1.western { font-family: "Albany", sans-serif; font-size: 16pt }
+		H1.cjk { font-size: 16pt }
+		H1.ctl { font-size: 16pt }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+<h1 class="western">Gnomish::Genome</h1>
+<p>This class defines the genomic properties of the organism.</p>
+<p><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">makeGenome</font></font></p>
+<p>Initialize the genome object with provided parameters.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: Name</p>
+	</li>
+  <li>
+    <p style="">Int: Nloci</p>
+	</li>
+  <li>
+    <p style="">String: RecombinationDists (comma 	separated values of
+type float)</p>
+	</li>
+  <li>
+    <p style="">String: AlleleSet (comma 	separated values of of either
+numbers or letters, 0-9, a-z, A-Z).</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $genome = new
+Gnomish::Genome;<br>
+&nbsp;&nbsp;&nbsp; $genome-&gt;makeGenome ( Name =&gt; "BarleyHT",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Nloci =&gt; 5,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+RecombinationDists =&gt; "0.1, 0.1,0.5,0.1,0.1",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleSet
+=&gt; "H,T,U,F" );</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+createUniformGenome</font></font></p>
+<p>Initialize the genome with uniform recombination distances.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">Int: NlociPerChromosome</p>
+	</li>
+  <li>
+    <p style="">Int: NChromosomes</p>
+	</li>
+  <li>
+    <p style="">Float: RecombinationDist</p>
+	</li>
+  <li>
+    <p style="">String: AlleleSet (in csv format)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $genome = new
+Gnomish::Genome;<br>
+&nbsp;&nbsp;&nbsp; $genome-&gt;createUniformGenome ( Name =&gt;
+"SimplePlant",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; NlociPerChromosome =&gt; 5,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; NChromosome =&gt; 7,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; RecombinationDist =&gt; 0.1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; AlleleSet =&gt; "A,C,K,L" );</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+createRandomGenome</font></font></p>
+<p>Initialize genome with a randome RecombinationDist array.  (This was
+created for debugging/testing purposes.)</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">Int: Nloci</p>
+	</li>
+  <li>
+    <p style="">Int: MaxChromosomeLen</p>
+	</li>
+  <li>
+    <p style="">String: AlleleSet (in csv format)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $genome = new
+Gnomish::Genome;<br>
+&nbsp;&nbsp;&nbsp; $genome-&gt;createRandomGenome ( Name =&gt;
+"RandomGenome",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; MaxChromosomeLen =&gt; 10,<br>
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; Nloci =&gt; 56,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleSet =&gt; "0,1" );</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+getName</font></font></p>
+<p>Return the genome's name.</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $genomeName =
+$genome-&gt;getName();</p>
+<p style=""><br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">setName</font></font></p>
+<p>Give the genome a new name.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: Name</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="">&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">$genome-&gt;setName
+( Name =&gt; "NewGenomeName");</span></p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><br>
+<br>
+<font face="Albany, sans-serif"><font size="4">getAlleleSet</font></font></p>
+<p>Return the set of valid alleles in the genome (in csv format).</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example:</b></p>
+<p style="">&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">my
+$alleleSet = $genome-&gt;getAlleleSet();</span></p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">validAllele</font></font></p>
+<p>Check and see if the specified allele is valid for the genome.
+Returns a '1' if the allele is valid, '0' if not.</p>
+<p><b>Parameters:</b><span style=""> </span> </p>
+<ul>
+	<li>
+    <p style="">String: Allele</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="">&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">if
+( $genome-&gt;validAllele ( Allele =&gt; "A" ) == 1)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; { </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; print "Allele is valid\n";</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; }</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; else</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; print "Allele is invalid\n";</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; }</span></p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">getNloci</font></font></p>
+<p>Return the number of loci in the genome.</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example:</b></p>
+<p style="">&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">my
+$nloci = $genome-&gt;getNloci();</span></p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">getRecombinationDistances</font></font></p>
+<p>Return a copy of the RecombinationDistances array.</p>
+<p><b>Parameters:</b><span style=""> nome</span></p>
+<p><b>Example:</b></p>
+<p style="">&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">my
+@rdists = $genome-&gt;getRecombinationDistances();</span></p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">getRecombinationDistancesRef</font></font></p>
+<p>Return a reference to the recombination distances array.  Use with
+caution!</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example:</b></p>
+<p style="">&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">my
+$rdistRef = $genome-&gt;getRecombinationDistancesRef();</span></p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">addTrait</font></font></p>
+<p>Add a new trait definition to the Genome.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: Name</p>
+	</li>
+  <li>
+    <p style="">Float: TraitMean</p>
+	</li>
+  <li>
+    <p style="">Float:TraitVariance</p>
+	</li>
+  <li>
+    <p style="">HashTable: TraitAlleleEffects 	(reference)</p>
+  </li>
+</ul>
+<p><b>Note:</b></p>
+<p style="">The 'TraitAlleleEffects" table is built like a two
+dimensional array, with the locus number as the first dimension and the
+allele state as the second dimension.</p>
+<p style="">Although it is efficient to define the effects of the trait
+in this way, it is somewhat dangerous.  We should add routines to build
+the table internally to hide it's structure from user scripts. (If the
+table is built incorrectly, the program could behave in weird and
+unexpected ways.)</p>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my
+%TraitAlleleEffects;<br>
+&nbsp;&nbsp;&nbsp; $TraitAlleleEffects{717}{HH} = -1.1;<br>
+&nbsp;&nbsp;&nbsp; $TraitAlleleEffects{717}{TT} = 1.1;<br>
+&nbsp;&nbsp;&nbsp; $TraitAlleleEffects{806}{UU} =  0.5;<br>
+&nbsp;&nbsp;&nbsp; $TraitAlleleEffects{806}{FF} =  1.5;<br>
+&nbsp;&nbsp;&nbsp; $TraitAlleleEffects{1190}{FH} = -1.65;<br>
+&nbsp;&nbsp;&nbsp; $TraitAlleleEffects{1190}{FT} = -0.35;<br>
+<br>
+&nbsp;&nbsp;&nbsp; $genome-&gt;addTrait ( Name =&gt; "Height",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; TraitMean
+=&gt; 89;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; TraitVariance =&gt; 5,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; TraitAlleleEffects =&gt;
+\%TraitAlleleEffects );</p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"> <font
+ face="Albany, sans-serif"><font size="4">addMarker</font></font></p>
+<p style="">Add a new marker definition to the genome.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: Name</p>
+	</li>
+  <li>
+    <p style="">Hashtable: MarkerCoding 	(refence).</p>
+  </li>
+</ul>
+<p><b>Note:</b></p>
+<p style="">The 'MarkerCoding' table is built in the same way that the
+TraitAlleleEffects is built.  Hence, the same potential problems apply.</p>
+<p><b>Example:</b></p>
+<p style=""><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my
+%MarkerCoding;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$MarkerCoding{1}{HH} = "H";</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$MarkerCoding{1}{TT} = "T";</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$MarkerCoding{21}{HH} = 'H';</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$genome-&gt;addMarker ( Name =&gt; "DNAmarkers",</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; MarkerCoding =&gt; %MarkerCoding
+);</span></p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+getTrait</font></font></p>
+<p>Return a copy of the named trait from the genome.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: TraitName</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $trait =
+$genome-&gt;getTrait ( TraitName =&gt; "Height");</p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">getTraitRef</font></font></p>
+<p>Return a reference to the named trait from the genome.  Use
+carefully!</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: TraitName</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $traitRef =
+$genome-&gt;getTraitRef (TraitName =&gt; "Height");</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+getMarker</font></font></p>
+<p>Return a copy of the named marker from the genome.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: MarkerName</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $marker =
+$genome-&gt;getMarker ( MarkerName =&gt; "DNAmarkers");</p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"> <font
+ face="Albany, sans-serif"><font size="4">getMarkerRef</font></font></p>
+<p style="">Return a reference to the named marker from the genome. 
+Use carefully!</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: MarkerName</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $markerRef =
+$genome-&gt;getMarkerRef (<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; MarkerName  =&gt; "DNAmarkers" );</p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">getTraitNames</font></font></p>
+<p>Return a list (as an array) of trait names that belong to the genome.</p>
+<p><b>Parameters:</b><span style=""> nome</span></p>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my @traitNames =
+$genome-&gt;getTraitNames();</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+getMarkerNames</font></font></p>
+<p>Return a list (as an array) of marker names that belong to the
+genome.</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my @markerNames =
+$genome-&gt;getMarkerNames();</p>
+<p style=""><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">drawInAscii</font></font></p>
+<p>Print an ASCII representation of the genome.  This is here mostly
+for debugging, and displays the genome's name, nloci, and recombination
+distance array.</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$genome-&gt;drawInAscii();</p>
+<p style=""><br>
+<br>
+</p>
+<p style=""><br>
+</p>
+</body>
+</html>

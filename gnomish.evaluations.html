@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030227;14160100">
+	
+  <meta name="CHANGED" content="20030306;17244300">
+</head>
+<body lang="en-US">
+<h1 class="western">Gnomish::Evaluations</h1>
+<p>Subroutines for selection from populations.</p>
+<br>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">computeTraitPhenotypeMean</font></font></p>
+<p>Compute the phenotypic mean value for a particular trait.  Make sure
+that the phenotypic values for the particular TraitName has been
+computed first!</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">Population (reference)</p>
+  </li>
+  <li>
+    <p style="">String: TraitName</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="margin-bottom: 0cm; font-family: monospace;">&nbsp;&nbsp;&nbsp;
+computeTraitPhenotypeMean ( Population =&gt; \$p, <br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; TraitName =&gt; 'Height');</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+computeTraitPhenotypeVariance</font></font></p>
+<p>Compute the phenotypic variance for the named trait.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">Population (reference)<br>
+    </p>
+  </li>
+  <li>
+    <p style="">String: TraitName</p>
+	</li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+computeTraitPhenotypeVariance ( Population =&gt; \$p,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; TraitName =&gt;
+'Height' );</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+selectGenotypeArray</font></font></p>
+<p>Select genotypes from a population with a particular locus that at
+the specified locus.  Return an array with the usual suspects.  Note
+that the returned members are copies of the original genotypes, and do
+not belong to any particular population.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">Population (reference)</p>
+	</li>
+  <li>
+    <p style="">Int: Locus</p>
+	</li>
+  <li>
+    <p style="">String: LocusState</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+selectGenotypeArray ( Population =&gt; \$p<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Locus =&gt; 45,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; LocusState
+=&gt; "AC" );<br>
+<br>
+</p>
+<p><font face="Helvetica, sans-serif"><b>countAlleleStatesInGenotype</b></font></p>
+<p style=""><font face="Helvetica, sans-serif">Count the number of
+different allele states in the allele strings of the genotype.  Return
+the result as a hash object.</font></p>
+<p style=""><font face="Helvetica, sans-serif">Parameters:</font></p>
+<ul>
+	<li>
+    <p style=""><font face="Helvetica, sans-serif">Genotype: 	Genotype
+(reference to a genotype object)</font></p>
+  </li>
+</ul>
+<p style=""><font face="Helvetica, sans-serif">Example:</font></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my %allele_states
+= countAlleleStatesInGenotype (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Genotype =&gt; \$genotype );</p>
+<p><br>
+<br>
+<font face="Helvetica, sans-serif"><b>getAlleleStateCountInGenotype</b></font></p>
+<p style=""><font face="Helvetica, sans-serif">Count the number of
+times a particular allele states in a genotype.</font></p>
+<p style=""><font face="Helvetica, sans-serif">Parameters:</font></p>
+<ul>
+	<li>
+    <p style=""><font face="Helvetica, sans-serif">Genotype: 	Genotype
+(reference to a genotype object)</font></p>
+	</li>
+  <li>
+    <p style=""><font face="Helvetica, sans-serif">String: 	AlleleState</font></p>
+  </li>
+</ul>
+<p style=""><font face="Helvetica, sans-serif">Example:</font></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $count =
+getAlleleStateCountInGenotype (<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Genotype =&gt; \$genotype,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; AlleleState =&gt; "aa" );</p>
+<p><br>
+<br>
+<font face="Helvetica, sans-serif"><b>countAlleleStatesInPopulation</b></font></p>
+<p style=""><font face="Helvetica, sans-serif">Count the occurrences of
+all allele states in the population.  Return the results in a hash
+object.</font></p>
+<p style=""><font face="Helvetica, sans-serif">Parameters:</font></p>
+<ul>
+	<li>
+    <p style=""><font face="Helvetica, sans-serif">Population:
+	Population (reference to a population object)</font></p>
+  </li>
+</ul>
+<p style=""><font face="Helvetica, sans-serif">Example:</font></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my %allele_states
+= countAlleleStatesInPopulation (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; Population =&gt; \$population );</p>
+<p style=""><br>
+<br>
+</p>
+<p><font face="Helvetica, sans-serif"><b>getAllleStateCountInPopulation</b></font></p>
+<p style=""><font face="Helvetica, sans-serif">Get the count of the
+number of times a particular allele state occurs in the genotypes in the
+population.</font></p>
+<p style=""><font face="Helvetica, sans-serif">Parameters:</font></p>
+<ul>
+	<li>
+    <p style=""><font face="Helvetica, sans-serif">Population:
+	Population (reference to a population object)</font></p>
+	</li>
+  <li>
+    <p style=""><font face="Helvetica, sans-serif">String: 	AlleleState</font></p>
+  </li>
+</ul>
+<p style=""><font face="Helvetica, sans-serif">Example:</font></p>
+<p style="font-family: monospace;">&nbsp;&nbsp;&nbsp; my $count =
+getAlleleStateCountInPopulation (<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Population =&gt; \$population,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleState =&gt; "aa" );</p>
+<p style=""><br>
+<br>
+</p>
+</body>
+</html>

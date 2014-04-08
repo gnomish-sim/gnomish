@@ -1,0 +1,368 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030317;11282800">
+	
+  <meta name="CHANGED" content="20030318;11280000">
+	
+  <style>
+	<!--
+		@page { margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		P { margin-bottom: 0.21cm }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+<h1><b>Gnomish Tutorial 2</b></h1>
+<i><br>
+(This is a modified and somewhat simplified version of the test
+simulation proposed by Diane in February to test Gnomish.)</i>
+<p style="margin-bottom: 0cm;">In tutorial 1, we introduced the basic
+elements of Gnomish and some features of Perl that are employed by
+Gnomish. Although tutorial 1 was a simple simulation, it still followed
+the basic structure of a typical simulation.  That is, we started out
+by creating the environment and elements to be used in the simulation,
+the simulation was ran, and results gathered and reported upon.</p>
+<p style="margin-bottom: 0cm;">Tutorial 2 will follow this basic
+structure and expand upon it with a more complex simulation.  In this
+simulation, we will create a Genome with 7 chromosomes and one trait.
+To start with, we will create two parental genotypes, Harrington and
+TR306. Harrington is homozygous for the H allele and TR306 for the T
+allele. We cross Harrington with TR306 to generate the F1 population and
+then generate a population of 150 doubled haploids from the F1. The
+report will detail:</p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;">The observed 	height of the
+population of 150 doubled haploids.</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">The observed 	variance of height
+among the 150 doubled haploids.</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">The number of 	doubled haploids with
+two H alleles at locus 1175 AND two H alleles 	at locus 1195.</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">The mean 	height of the doubled
+haploids with two H alleles at locus 1175 and 	two H alleles at locus
+1195.</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">The number of 	doubled haploids with
+two T alleles at locus 1175 AND two T alleles 	at locus 1195.</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">The mean 	height of the doubled
+haploids with two T alleles at locus 1175 and 	two T alleles at locus
+1195.</p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;">This simulation tests Gnomish's handling
+of genome objects, populations, crossing routines, and demonstrates a
+fairly complex report. <i>(NOTE: will the type of report query
+performed here be something that will be quite common?  ie. Should I
+consider creating routines to select genotypes with specific allele
+states at more than one locus?)</i></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<hr style="width: 100%; height: 2px;"><br>
+As before, at the start of the script, we load the appropriate Perl and
+Gnomish modules as well as initialize the random number generator.<br>
+<br>
+&nbsp;&nbsp;&nbsp; <span
+ style="font-family: monospace; color: rgb(0, 102, 0);"># BarleyHT
+tutorial</span><br
+ style="font-family: monospace; color: rgb(0, 102, 0);">
+<span style="font-family: monospace; color: rgb(0, 102, 0);">&nbsp; #
+In this tutorial, we want to simulate the breeding of two populations,</span><br
+ style="font-family: monospace; color: rgb(0, 102, 0);">
+<span style="font-family: monospace; color: rgb(0, 102, 0);">&nbsp; #
+one homozygous for the 'H' allele, and one homozygous for the 'T' allele.</span><br
+ style="font-family: monospace; color: rgb(0, 102, 0);">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; use strict;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; use Gnomish::Genome;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; use Gnomish::Population;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; use Gnomish::Genotype;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; use Gnomish::Stdlib;</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; use Gnomish::Evaluations;</span><br
+ style="font-family: monospace;">
+<br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; <span
+ style="color: rgb(0, 102, 0);"># Initialize random number generator</span></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; initialize();</span><br
+ style="font-family: monospace;">
+<br>
+In this tutorial, we have a much more complex genome with 7 chromosomes
+and a total of 1281 locus. &nbsp;As indicated in tutorial 1,
+recombination distances are specified in a string with a call to <span
+ style="font-weight: bold;">makeGenome</span>. &nbsp;Normally, each the
+recombination distance must be specified in comma seperated format as
+follows:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <span style="font-family: monospace;">my
+$recombination_distances = "0.01, 0.01, 0.01, ..., 0.5, 0.01, 0.01, ...
+";</span> <br>
+<br>
+As can be imagined, this method becomes rather cumbersome when
+specifying all 1280 recombination distances. &nbsp;Fortunately, since in
+the majority of cases, the recombination distance between each loci is
+quite likely to be the same (in the case of this simulation, the
+recombination distance between loci in each chromosome is 0.01).
+&nbsp;Gnomish provides two different short hand methods for specifying
+the recombination distances for relatively uniform genomes.<br>
+<br>
+In the case where the genome is completely uniform, where all
+chromosomes have exactly the same number of locus and the recombination
+distance between each loci is the same, genomes can be created by using
+the <span style="font-weight: bold;">Gnomish::Genome::createUniformGenome</span>
+method provided by the Gnomish Genome class. &nbsp;In this case, the
+genome would be created as follows:<br>
+<pre>  my $genome = make Gnomish::Genome;<br>  $genome-&gt;createUniformGenome ( NChromosomes =&gt; &lt;number of chromomes in the genome&gt;,<br>				 NlociPerChromosome =&gt; &lt;number of loci in each chromosome&gt;,<br>				 RecombinationDist =&gt; &lt;recombination distance between each loci&gt;,<br>				 Name =&gt; &lt;name of genome&gt; );<br><br></pre>
+<p>If the genome has chromosomes of varying lengths or the
+recombination distances between loci differ between chromosomes, the <span
+ style="font-weight: bold;">Gnomish::Stdlib</span> module has a
+function, <span style="font-weight: bold;">createRecombinationDistanceString</span>,
+that can be used to generate the necessary string. &nbsp;For example,
+if we needed to specify the recombination distance string for a genome
+that has 3 chromosomes, each with 10, 12 and 8 loci per chromome and
+recombination distances of 0.01, 0.04 and 0.02 then we can create the
+string as follows:<br>
+</p>
+<pre>  my $recombination_distances = createRecombinationDistanceString ( Chromosomes =&gt; 3,<br>					ChromosomeLengths =&gt; "10, 12, 8",<br>					RecombinationDistances =&gt; "0.01, 0.04, 0.02" );<br><br></pre>
+<p><span style="font-style: italic;">(NOTE: having these two methods
+for definining the recombination distance array in a genome may be
+potentially confusing, especially since <span style="font-weight: bold;">createRecombinationDistanceString</span>
+is a library function that is defined in <span
+ style="font-weight: bold;">Gnomish::Stdlib</span> and <span
+ style="font-weight: bold;">createUniformGenome</span> is a class method
+that is defined as part of the <span style="font-weight: bold;">Gnomish::Genome</span>
+class. &nbsp;Is this confusing? &nbsp;Should I consider changing <span
+ style="font-weight: bold;">createUniformGenome</span> into a more
+generic function like <span style="font-weight: bold;">createRecombinationDistanceString</span>
+and move it into <span style="font-weight: bold;">Gnomish::Stdlib</span>?)</span></p>
+<p>For this tutorial, we need a genome with 7 chromosomes, each with a
+recombination distance of 0.01 between each loci and the following
+number of loci per chromosome:&nbsp; 161, 214, 115, 165, 237, 162, 187.
+&nbsp;We create the genome as follows:<br>
+</p>
+<br>
+<pre>  <span style="color: rgb(0, 102, 0);"># First, create the genome</span><br>  my $genome = new Gnomish::Genome;<br><br>  <span
+ style="color: rgb(0, 102, 0);"># Create a string with the recombination distances.</span>&nbsp; <br>  my $recombination_dists = createRecombinationDistanceString (<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Chromosomes =&gt; 7,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ChromosomeLengths =&gt; "161,214,155,165,237,162,187",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RecombinationDistances =&gt; "0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01" );<br><br>  $genome-&gt;makeGenome ( Name =&gt; "BarleyHT",<br>                        Nloci =&gt; 1281,<br>                        RecombinationDists =&gt; $recombination_dists,<br>                        AlleleSet =&gt; "H,T" );<br><br><br></pre>
+<p>Next, we need to define the trait 'Height'. &nbsp;Traits are defined
+by the collection of locus possitions and the allele state at these
+locus. &nbsp;Hence, we need to specify the list of locus and the effect
+that each allele state has at each possition. &nbsp;In Gnomish, the
+trait allele effects are coded in a Perl hash object in the following
+format:<br>
+</p>
+<pre>  my %trait_allele_effects;<br>  $trait_allele_effects{locus}{allele_state} = 'allele_effect';<br><br></pre>
+<p>So if a trait that belongs to a genome with alleles '<span
+ style="font-weight: bold;">a</span>' and '<span
+ style="font-weight: bold;">b</span>', specifying the allele effect at
+locus '1234' would look like:<br>
+</p>
+<pre>  my %trait_allele_effects;<br>  $trait_allele_effects{1234}{aa} = 1;<br>  $trait_allele_effects{1234}{ab} = 0;<br>  $trait_allele_effects{1234}{bb} = -2;<br></pre>
+<p>With this in mind, we can define new traits in a genome by using the <span
+ style="font-weight: bold;">addTrait</span> class method in the <span
+ style="font-weight: bold;">Gnomish::Genome</span> class. &nbsp;Note
+that the 'TraitAlleleEffects' hash is passed into <span
+ style="font-weight: bold;">addTrait</span> by reference.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># Next, we define a new Trait</span><br>  my %TraitAlleleEffects;<br>  $TraitAlleleEffects{717}{HH} = -1.1;<br>  $TraitAlleleEffects{717}{TT} =  1.1;<br>  $TraitAlleleEffects{717}{HT} =  0;<br>  $TraitAlleleEffects{806}{HH} =  -1;<br>  $TraitAlleleEffects{806}{TT} =  1;<br>  $TraitAlleleEffects{806}{HT} =  0;<br>  $TraitAlleleEffects{1190}{HH} = -1.3;<br>  $TraitAlleleEffects{1190}{TT} = 1.3;<br>  $TraitAlleleEffects{1190}{HT} = 0;<br><br>  <span
+ style="color: rgb(0, 102, 0);"># Add it to the genome's definition.</span><br>  $genome-&gt;addTrait ( Name =&gt; "Height",<br>                      TraitMean =&gt; 89,<br>                      TraitVariance =&gt; 5,<br>                      TraitAlleleEffects =&gt; \%TraitAlleleEffects);<br></pre>
+<p>New traits can be defined this way, each trait must have its own
+trait allele effects table and a unique name. &nbsp;Likewise, markers
+can be defined with an analogous method using the <span
+ style="font-weight: bold;">Gnomish::Genome</span> class method <span
+ style="font-weight: bold;">addMarker</span>. &nbsp;Please refer to the
+documentation for <span style="font-weight: bold;">Gnomish::Genome</span>
+for more information.<br>
+</p>
+<p>We now define the two parent genotypes to be used to create the F1
+population.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># Create the genotypes</span><br>  my $g0 = new Gnomish::Genotype;<br>  $g0-&gt;makeHomozygousGenotype (Name =&gt; "Harrington",<br>                                Genome =&gt; $genome,<br>                                Allele =&gt; 'H');<br><br>  my $g1 = new Gnomish::Genotype;<br>  $g1-&gt;makeHomozygousGenotype (Name =&gt; 'TR306',<br>                                Genome =&gt; $genome,<br>				Allele =&gt; 'T' );<br></pre>
+<p>We cross the parents...<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># cross Harrington with TR306 to create the F1 population   </span><br>  my $f1 = new Gnomish::Genotype;<br>  $f1-&gt;makeWithParents (Parent1 =&gt; \$g0,<br>                        Parent2 =&gt; \$g1);<br></pre>
+<p>Then use this parent genotype to create the original F1 population.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># create the original f1 population</span><br>  my $p0 = new Gnomish::Population;<br>  $p0-&gt;addMember (Genotype =&gt; $f1);<br></pre>
+<p><br>
+And generate a new generation of doubled haploid progenies.<br>
+<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># ... and generate 150 doubled haploids from the F1</span><br>  my $population = doubledHaploids (NProgeny =&gt; 150,<br>  				    ParentPop =&gt; \$p0);<br></pre>
+<p>In order to save on computation time during the simulation, Gnomish
+does not calculate the genotypic and phenotypic values of individuals in
+a population until explicitly told to do so.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># compute the phenotypic values.</span><br>  $population-&gt;computePhenotypes();<br></pre>
+<p>The <span style="font-weight: bold;">Gnomish::Population</span>
+class method <span style="font-weight: bold;">computePhenotypes</span>
+causes Gnomish to step through each individual in the population object
+and compute the genotypic and phenotypic values of all traits in the
+genotype's genome. &nbsp;Both genotypic and phenotypic values associated
+with each genotype is saved in its internal data structures for recall
+at a later time. &nbsp;<span style="font-weight: bold;">Remember to
+recompute the phenotypic values before using them if you have performed
+any crossing operations on the population!<br>
+</span></p>
+<p><span style="font-weight: bold;"></span>We now generate our report
+on the simulation. &nbsp;The <span style="font-weight: bold;">Gnomish::Evaluations</span>
+module provides a number of standard evaluation routines that can be
+used for this purpose. &nbsp;<span style="font-style: italic;">(NOTE:
+there are also a number of selection functions that have been placed in
+this module. &nbsp;If the number of selection routines grow, I should
+probably move them out into their own module. &nbsp;They were just
+lumped in with the evaluation routines for convenience.)</span><br>
+<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># compute the mean of the trait "Height" and report</span><br>  my $mean_height = computeTraitPhenotypeMean ( Population =&gt; \$population,<br>						TraitName =&gt; "Height" );<br>  print "Mean Height: $mean_height\n";<br><br>  <span
+ style="color: rgb(0, 102, 0);"># compute the variance of the trait "Height" and report</span><br>  my $height_variance = computeTraitPhenotypeVariance (Population =&gt; \$population,<br>							 TraitName =&gt; "Height");<br>  print "Height Variance: $height_variance\n";<br></pre>
+<p></p>
+We now want to find the number of doubled haploids with two H alleles
+at locus 1175 and at locus 1195.&nbsp; To do this, we will have to
+iterate over the entire population and select individuals with
+genotypes that have two H alles at locus 1175 <span
+ style="font-weight: bold;">and</span> two H alleles at locus 1195. <span
+ style="font-style: italic;">(NOTE: should I be thinking about
+providing standard selection routines in Gnomish that do this?&nbsp; Is
+this sort of selection common enough?)</span><br>
+<br>
+In order to make the routine a little more generic (in case we decide
+to change the number of individuals in the population later), we query
+the population object itself for the number of members that belongs in
+the population.&nbsp; We will need to know this to iterate over every
+member of the population.<br>
+<pre>  <span style="color: rgb(0, 102, 0);"># Get number of individuals in the population</span><br>  my $members = $population-&gt;nMembers();<br></pre>
+<p>We will also need to create an array to keep a list of genotypes
+that are found during our selection process.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># We will use this array to keep track of the number of members</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);">  # of the population with locus state HH at locus 1175 and 1195</span><br>  my @mlist;<br></pre>
+<p>We now iterate over the population.&nbsp; Individual members in a
+population are indexed from 0 to N, hence we examine them one at a time
+to find those that have the allele state of 'HH' at locus 1175 and
+locus 1195.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># Iterate over the population</span><br>  for (my $i = 0; $i &lt; $members; $i++)<br><pre>  {</pre>        <span
+ style="color: rgb(0, 102, 0);"># Get a copy of the individual from the population for us to examine</span><br>        my $m = $population-&gt;getMember ( Member =&gt; $i );<br><br>        <span
+ style="color: rgb(0, 102, 0);"># Get it's locus state at locus 1175 and 1195</span><br>        my $locus_state1175 = $m-&gt;getLocusState ( Locus =&gt; 1175 );<br>        my $locus_state1195 = $m-&gt;getLocusState ( Locus =&gt; 1195 );<br><br>        <span
+ style="color: rgb(0, 102, 0);"># Check to see if the locus state at both locus is 'HH'</span><br>        if ( ($locus_state1175 eq "HH") and ($locus_state1195 eq "HH") )<br>        {<br>                <span
+ style="color: rgb(0, 102, 0);"># if the locus state is HH at both locus, save the individual to a list</span><br>                push @mlist, $m;<br>        }<br>  }<br></pre>
+<p>Note that the <span style="font-weight: bold;">Gnomish::Population</span>
+class method <span style="font-weight: bold;">getMember</span> returns
+an identical copy of the individual of the specified member
+index.&nbsp; The original individual is still there in its population
+object until explicitly deleted or altered -- this can be thought of as
+analogous to the act of loading files from a harddrive.&nbsp; <br>
+</p>
+<p>At this stage, we now have a list of genotypes with allele state
+'HH' at locus 1175 and 1195.&nbsp; In Perl, it is not necessary to
+count the number of elements in an array by iterating over the array,
+as with most other programming languages.&nbsp; We can use the Perl
+command <span style="font-weight: bold;">scalar</span> to report on the
+number of elements in the array.&nbsp; In this case, it will also give
+us the number of genotypes stored in the array.<br>
+</p>
+<pre>  # Count the number of individuals found with the locus <br>  # state 'HH' at locus 1175 and 1195, and report.<br>  my $n = scalar @mlist;<br>  print "Number of doubled happloids with two H alleles at locus 1175 and 1195: $n\n";<br></pre>
+<p>Next, we calculate the average height of the individuals in the
+list.&nbsp; The Perl command <span style="font-weight: bold;">foreach</span>
+is a convenient way to traverse an array.&nbsp; At each genotype in the
+array, we can use the <span style="font-weight: bold;">Gnomish::Genotype</span>
+class method <span style="font-weight: bold;">getPhenotypicValue</span>
+to examine the phenotypic value of the trait Height (remember, each
+member of a <span style="font-weight: bold;">Gnomish::Population</span>
+class object is a <span style="font-weight: bold;">Gnomish::Genotype</span>
+class object).<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># Compute the mean height of the individuals found</span><br>  my $sum = 0;<br>  foreach my $m (@mlist)<br>  {<br>        my $height = $m-&gt;getPhenotypicValueForTrait ( TraitName =&gt; "Height" );<br>        $sum = $sum + $height;<br>  }<br>  my $mean = $sum / $n;<br>  print "Mean height: $mean\n";<br></pre>
+<p>The report detailing the number of haploids with the allele state
+'TT' at locus 1175 and locus 1195 is quite similar.&nbsp; However, this
+time, we do not need to redeclare the array '@mlist', but we do need to
+clear it before it can be reused.<br>
+</p>
+<pre>  # Next, find the number of doubled haploids with<br>  # two T alleles at locus 1175 AND locus 1195<br><br>  # Reset the member list, throwing out the old HH doubled haploids..<br>  undef @mlist; <br><br>  for (my $i = 0; $i &lt; $members; $i++)<br>  {<br>        my $m = $population-&gt;getMember ( Member =&gt; $i );<br><br>        my $locus_state1175 = $m-&gt;getLocusState ( Locus =&gt; 1175 );<br>        my $locus_state1195 = $m-&gt;getLocusState ( Locus =&gt; 1195 );<br><br>        <span
+ style="color: rgb(0, 102, 0);"># Check and see if the state at both locus is "TT"</span><br>        if ( ($locus_state1175 eq "TT") and ($locus_state1195 eq "TT") )<br>        {<br>                push @mlist, $m;<br>        }<br>  }<br></pre>
+<p>Finally, report on the data collected.<br>
+</p>
+<pre>  <span style="color: rgb(0, 102, 0);"># Count the number of individuals found with the locus state 'TT' at locus 1175 and 1195</span><br>  $n = scalar @mlist;<br>  print "Number of doubled haploids with two T alleles at locus 1175 and locus 1195: $n\n";<br><br>  <span
+ style="color: rgb(0, 102, 0);"># Compute the mean height of the individuals found.</span><br>  $sum = 0;<br>  foreach my $m (@mlist)<br>  {<br>        my $height = $m-&gt;getPhenotypicValueForTrait ( TraitName =&gt; "Height" );<br>        $sum = $sum + $height;<br>  }<br>  $mean = $sum / $n;<br>  print "Mean height: $mean\n";<br></pre>
+<p>The simulation is complete!&nbsp; We have created an example
+simulation and a novel selection method to examine specific subsets of
+the population.&nbsp; The output should look similar to the sample
+output below:<br>
+</p>
+<pre>  &gt; perl harrington-tutorial.pl<br>  Mean Height: 89.0547853215903<br>  Height Variance: 9.24959124011869<br>  Number of doubled happloids with two H alleles at locus 1175 and 1195: 62<br>  Mean height: 87.5457642603866<br>  Number of doubled haploids with two T alleles at locus 1175 and locus 1195: 61<br>  Mean height: 90.7558033120846<br>  &gt; <br></pre>
+<hr style="width: 100%; height: 2px;"><span style="font-weight: bold;">The
+complete source code:<br>
+<br>
+</span><span style="font-weight: bold;"></span>
+<pre><span style="color: rgb(0, 102, 0);"># BarleyHT tutorial</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);"># In this tutorial, we want to simulate the breeding of two populations,</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);"># one homozygous for the 'H' allele, and one homozygous for the 'T' allele.</span><br
+ style="color: rgb(0, 102, 0);"><br>use strict;<br><br>use Gnomish::Genome;<br>use Gnomish::Population;<br>use Gnomish::Genotype;<br>use Gnomish::Stdlib;<br>use Gnomish::Evaluations;<br><br><br><span
+ style="color: rgb(0, 102, 0);"># Initialize random number generator</span><br>initialize();<br><br><span
+ style="color: rgb(0, 102, 0);">### Setup the simulation ###</span><br
+ style="color: rgb(0, 102, 0);"><br style="color: rgb(0, 102, 0);"><span
+ style="color: rgb(0, 102, 0);"># First, create the genome</span><br>my $genome = new Gnomish::Genome;<br><br><span
+ style="color: rgb(0, 102, 0);"># Create a string with the recombination distances. </span><br>my $recombination_dists = createRecombinationDistanceString (<br>                                Chromosomes =&gt; 7,<br>                                ChromosomeLengths =&gt; "161,214,155,165,237,162,187",<br>                                RecombinationDistances =&gt; "0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01" );<br><br>$genome-&gt;makeGenome ( Name =&gt; "BarleyHT",<br>                      Nloci =&gt; 1281,<br>                      RecombinationDists =&gt; $recombination_dists,<br>                      AlleleSet =&gt; "H,T" );<br><br><span
+ style="color: rgb(0, 102, 0);"># Next, we define a new Trait</span><br>my %trait_allele_effects;<br>$trait_allele_effects{717}{HH} = -1.1;<br>$trait_allele_effects{717}{TT} =  1.1;<br>$trait_allele_effects{717}{HT} =  0;<br>$trait_allele_effects{806}{HH} =  -1;<br>$trait_allele_effects{806}{TT} =  1;<br>$trait_allele_effects{806}{HT} =  0;<br>$trait_allele_effects{1190}{HH} = -1.3;<br>$trait_allele_effects{1190}{TT} = 1.3;<br>$trait_allele_effects{1190}{HT} = 0;<br><br><span
+ style="color: rgb(0, 102, 0);"># Add it to the genome's definition.</span><br>$genome-&gt;addTrait ( Name =&gt; "Height",<br>                    TraitMean =&gt; 89,<br>                    TraitVariance =&gt; 5,<br>                    TraitAlleleEffects =&gt; \%trait_allele_effects);<br><br><span
+ style="color: rgb(0, 102, 0);"># Create the genotypes</span><br>my $g0 = new Gnomish::Genotype;<br>$g0-&gt;makeHomozygousGenotype (Name =&gt; "Harrington",<br>                             Genome =&gt; $genome,<br>                             Allele =&gt; 'H');<br>                                <br>my $g1 = new Gnomish::Genotype;<br>$g1-&gt;makeHomozygousGenotype (Name =&gt; 'TR306',<br>                             Genome =&gt; $genome,<br>                             Allele =&gt; 'T');<br> <br><span
+ style="color: rgb(0, 102, 0);"># cross Harrington with TR306 to create the F1 population   </span><br>my $f1 = new Gnomish::Genotype;<br>$f1-&gt;makeWithParents (Parent1 =&gt; \$g0,<br>                      Parent2 =&gt; \$g1);<br>                                <br><span
+ style="color: rgb(0, 102, 0);"># create the original f1 population</span><br>my $p0 = new Gnomish::Population;<br>$p0-&gt;addMember (Genotype =&gt; $f1);<br><br><span
+ style="color: rgb(0, 102, 0);"># ... and generate 150 doubled haploids from the F1</span><br>my $population = doubledHaploids (NProgeny =&gt; 150,<br>                                  ParentPop =&gt; \$p0);<br><br><span
+ style="color: rgb(0, 102, 0);"># compute the phenotypic values.</span><br>$population-&gt;computePhenotypes();<br><br><span
+ style="color: rgb(0, 102, 0);"># compute the mean of the trait "Height" and report</span><br>my $mean_height = computeTraitPhenotypeMean ( Population =&gt; \$population,<br>                                              TraitName =&gt; "Height" );<br>print "Mean Height: $mean_height\n";<br><br><span
+ style="color: rgb(0, 102, 0);"># compute the variance of the trait "Height" and report</span><br>my $height_variance = computeTraitPhenotypeVariance (Population =&gt; \$population,<br>                                                     TraitName =&gt; "Height");<br>print "Height Variance: $height_variance\n";<br><br><span
+ style="color: rgb(0, 102, 0);"># Find the number of doubled haploids with allele state 'HH'</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);"># at locus 1175 and locus 1195.</span><br
+ style="color: rgb(0, 102, 0);"><br style="color: rgb(0, 102, 0);"><span
+ style="color: rgb(0, 102, 0);"># Get number of individuals in the population</span><br
+ style="color: rgb(0, 102, 0);">my $members = $population-&gt;nMembers();  <br><br><span
+ style="color: rgb(0, 102, 0);"># We will use this array to keep track of the number of members</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);"># of the population with locus state HH at locus 1175 and 1195 </span><br
+ style="color: rgb(0, 102, 0);">my @mlist;<br><br><span
+ style="color: rgb(0, 102, 0);"># Iterate over the population</span><br>for (my $i = 0; $i &lt; $members; $i++)<br>{<br><span
+ style="color: rgb(0, 102, 0);">        # Get a copy of the individual from the population for us to examine</span><br>        my $m = $population-&gt;getMember ( Member =&gt; $i );<br>        <br><span
+ style="color: rgb(0, 102, 0);">        # Get it's locus state at locus 1175 and 1195</span><br>        my $locus_state1175 = $m-&gt;getLocusState ( Locus =&gt; 1175 );<br>        my $locus_state1195 = $m-&gt;getLocusState ( Locus =&gt; 1195 );<br>        <br><span
+ style="color: rgb(0, 102, 0);">        # Check to see if the locus state at both locus is 'HH'</span><br>        if ( ($locus_state1175 eq "HH") and ($locus_state1195 eq "HH") )<br>        {<br><span
+ style="color: rgb(0, 102, 0);">                # if the locus state is HH at both locus, save the individual to a list</span><br>                push @mlist, $m;<br>        }<br>}<br><br><span
+ style="color: rgb(0, 102, 0);"># Count the number of individuals found with the locus state</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);"># 'HH' at locus 1175 and 1195, and report.</span><br
+ style="color: rgb(0, 102, 0);">my $n = scalar @mlist;<br>print "Number of doubled happloids with two H alleles at locus 1175 and 1195: $n\n";<br><br><span
+ style="color: rgb(0, 102, 0);"># Compute the mean height of the individuals found</span><br>my $sum = 0;<br>foreach my $m (@mlist)<br>{<br>        my $height = $m-&gt;getPhenotypicValueForTrait ( TraitName =&gt; "Height" );<br>        $sum = $sum + $height;<br>}<br>my $mean = $sum / $n;<br>print "Mean height: $mean\n";<br><br><br><br><span
+ style="color: rgb(0, 102, 0);"># Next, find the number of doubled haploids with</span><br
+ style="color: rgb(0, 102, 0);"><span style="color: rgb(0, 102, 0);"># two T alleles at locus 1175 AND locus 1195</span><br
+ style="color: rgb(0, 102, 0);"><br style="color: rgb(0, 102, 0);"><span
+ style="color: rgb(0, 102, 0);"># Reset the member list, throwing out the old HH doubled haploids..</span><br
+ style="color: rgb(0, 102, 0);">undef @mlist; <br><br>for (my $i = 0; $i &lt; $members; $i++)<br>{<br>        my $m = $population-&gt;getMember ( Member =&gt; $i );<br>        <br>        my $locus_state1175 = $m-&gt;getLocusState ( Locus =&gt; 1175 );<br>        my $locus_state1195 = $m-&gt;getLocusState ( Locus =&gt; 1195 );<br>        <br><span
+ style="color: rgb(0, 102, 0);">        # Check and see if the state at both locus is "TT"</span><br>        if ( ($locus_state1175 eq "TT") and ($locus_state1195 eq "TT") )<br>        {<br>                push @mlist, $m;<br>        }<br>}<br><br><span
+ style="color: rgb(0, 102, 0);"># Count the number of individuals found with the locus state 'TT' at locus 1175 and 1195</span><br>$n = scalar @mlist;<br>print "Number of doubled haploids with two T alleles at locus 1175 and locus 1195: $n\n";<br><br><span
+ style="color: rgb(0, 102, 0);"># Compute the mean height of the individuals found.</span><br>$sum = 0;<br>foreach my $m (@mlist)<br>{<br>        my $height = $m-&gt;getPhenotypicValueForTrait ( TraitName =&gt; "Height" );<br>        $sum = $sum + $height;<br>}<br>$mean = $sum / $n;<br>print "Mean height: $mean\n";<br><br></pre>
+<p><br>
+</p>
+<pre></pre>
+<p style="margin-bottom: 0cm;"> </p>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030226;16212300">
+	
+  <meta name="CHANGED" content="20030227;13583200">
+</head>
+<body lang="en-US">
+<h1>Gnomish::DB</h1>
+<p>This is the database access layer for Gnomish. At the moment, it
+supports the MySQL and Access database (through ODBC). </p>
+<p>The routines in this module are still in flux, and are often
+inconsistent with the interface conventions established by the other
+modules. For example, most of the subroutines here do not have labeled
+parameters (eg. GenomeName =&gt; $genome_name). </p>
+<p>I'm also not quite sure about what sorts of functionality people
+would find useful in the database later, so this stuff is highly
+experimental. </p>
+<p>When looking at the module's source code, generally speaking public
+subroutines (routines designed to be accessed from outside of the
+module by the user program) will have names that begin with 'DB'.
+Subroutines that are designed only for use by other subroutines in the
+module will have names that begin with an underscore. </p>
+<p><strong>There are three classes of functions available from this
+module:</strong> </p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><b>Initialization:</b> 	</p>
+	
+    <ul>
+		<li>
+        <p style="margin-bottom: 0cm;">DB_setParams 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_init 		</p>
+	</li>
+    </ul>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Load/Save:</b> 	</p>
+	
+    <ul>
+		<li>
+        <p style="margin-bottom: 0cm;">DB_loadGenome 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_loadPopulation 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_saveGenome 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_savePopulation 		</p>
+	</li>
+    </ul>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Utility:</b> 	</p>
+	
+    <ul>
+		<li>
+        <p style="margin-bottom: 0cm;">DB_deleteGenome 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_deletePopulation 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_renameMarker 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_renameTrait 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_renameGenome 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_renamePopulation 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_listMarkerNames 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_listTraitNames 		</p>
+		</li>
+      <li>
+        <p style="margin-bottom: 0cm;">DB_listPopulationNames 		</p>
+		</li>
+      <li>
+        <p>DB_listGenomeNames 		</p>
+	</li>
+    </ul>
+  </li>
+</ul>
+<hr>
+<p><br>
+<br>
+</p>
+<h2>Initialization</h2>
+<p>Before any database access can be made, both initialization routines
+must be called in the following sequence:</p>
+<ol>
+	<li>
+    <p style="margin-bottom: 0cm;">DB_setParams 	</p>
+	</li>
+  <li>
+    <p>DB_init 	</p>
+  </li>
+</ol>
+<h3>DB_setParams</h3>
+<p>Set the database parameters.<br>
+<br>
+<b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;">DB_Type: database type ('ODBC' or
+	'mysql') 	</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">DB_Name: name of the database, or
+	in the case of ODBC, the name of the database handle 	</p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;">DB_User: use name to use for the
+	database authentication 	</p>
+	</li>
+  <li>
+    <p>DB_Passwd: database password 	</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<pre style="font-family: monospace;">DB_setParams (DB_Type =&gt; "mysql",<br>                DB_Name =&gt; "gnomish",<br>                DB_User =&gt; "root",<br>                DB_Passwd =&gt; "password");</pre>
+<h3> DB_init</h3>
+<p>Initialize the database, and return a database channel (called a
+handle). This subroutine is optional, and if excluded, it is called
+automatically if one of the public subroutines are called without a
+valid database.<br>
+<br>
+<br>
+</p>
+<p><b>Parameters:</b><span style=""> none</span></p>
+<p><b>Example</b><span style="">:</span></p>
+<p>A typical script with database calls can look like:</p>
+<pre style="font-family: monospace;">	DB_setParams (...);<br>	my $genome = DB_loadGenome ( .... );<br>	my $population = DB_loadPopulation ( .... );</pre>
+<p> <br>
+<br>
+</p>
+<p>However, the above code gets in efficient if there are lots of
+calls to database code because it forces the code to establish a new
+connection to the database each time there is a database call.  Code
+with lots of database access would be more efficient coded like this:</p>
+<pre>	DB_serParams ( ... );<br>	my $dbh = DB_init();<br>	my $genome = DB_loadGenome ( ..., $dbh);<br>	my $population = DB_loadPopulation ( ...., $dbh);<br></pre>
+<p style="margin-bottom: 0cm;"> This way, a single database connection
+is reused over and over, avoiding the need to re-establish a new
+connection each time a database access is made.</p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<hr>
+<h2>Load/Save Functions</h2>
+<h3>DB_saveGenome</h3>
+<p>Save the specified Genome to the database.  The genome to be saved
+must have a unique name that does not already exist in the database.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">$genome (reference)</p>
+	</li>
+  <li>
+    <p style="">$dbh (optional)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<pre>	my $genome = new Gnomish::Genome;<br>	...<br>	DB_saveGenome (\$genome, $dbh);</pre>
+<p style="margin-bottom: 0cm; text-decoration: none;"> <br>
+</p>
+<h3>DB_savePopulation</h3>
+<p>Save the population to the database.  The population to be saved
+must have a unique name that does not already exist in the database.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p>$population (reference)</p>
+	</li>
+  <li>
+    <p>$dbh (optional)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<pre>	my $population = new Gnomish::Population;<br>	...<br>	DB_savePopulation (\$pop, $dbh);<br></pre>
+<h3><br>
+</h3>
+<h3> DB_loadPopulation</h3>
+<p>Load the specified population from the database, and return a new
+population object.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: population name</p>
+	</li>
+  <li>
+    <p style="">$dbh (optional)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<pre>	my $population = DB_loadPopulation ( "Harrington", $dbh);</pre>
+<p style="margin-bottom: 0cm;"> <br>
+</p>
+<h3>DB_loadGenome</h3>
+<p>Load the specified genome from the database, and return a new genome
+object.</p>
+<p><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="">String: genome name</p>
+	</li>
+  <li>
+    <p style="">$dbh (optional)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<pre>	my $genome = DB_loadPopulation ( "BarleyHT", $dbh);</pre>
+<p style="margin-bottom: 0cm;"> <br>
+</p>
+<hr>
+<h2>Utility Functions</h2>
+<h3>DB_listGenomeNames</h3>
+<p>Return an array with the names of the Genomes stored in the database.</p>
+<p><b>Parameters:</b><span style=""> </span> </p>
+<ul>
+	<li>
+    <p style="">$dbh (optional)</p>
+  </li>
+</ul>
+<p><b>Example:</b></p>
+<pre>	my @genome_names = DB_listGenomeNames ($dbh);</pre>
+<p style="margin-bottom: 0cm;"> <br>
+</p>
+<h2><font size="4"><b>DB_listPopulationNames</b></font></h2>
+<p style="margin-bottom: 0cm;">Return an array with the names of the
+Populations stored in the database.</p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><b>Parameters:</b></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;">$dbh 	(optional)</p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_listTraitNames</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Return an array with the
+names of the Traits stored in the database.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_listMarkerNames</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Return an array with the
+names of the Markers stored in the database.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_renamePopulation</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Give the named population
+a new name.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	old name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	new name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_renameGenome</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Give the named genome a
+new name.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	old name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	new name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_renameTrait</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Give the named trait a
+new name.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	old name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	new name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_renameMarker</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Give the named marker a
+new name.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	old name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	new name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_deletePopulation</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Delete the named
+population from the database.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	population
+name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="4"><b>DB_deleteGenome</b></font></p>
+<p style="margin-bottom: 0cm;"><font size="3">Delete the named genome
+from the database.</font></p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><font size="3"><b>Parameters:</b></font></p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><font size="3">String: 	genome name</font></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><font size="3">$dbh 	(optional)</font></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+</body>
+</html>

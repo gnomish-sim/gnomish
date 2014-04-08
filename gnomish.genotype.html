@@ -1,0 +1,376 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030304;13433700">
+	
+  <meta name="CHANGED" content="20030307;11331700">
+	
+  <style>
+	<!--
+		@page { margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		P { margin-bottom: 0.21cm }
+		P.western { font-family: "Helvetica", sans-serif; font-weight: medium }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+<p style="margin-top: 0.42cm; page-break-after: avoid;"> <font
+ face="Albany, sans-serif"><font size="4">Gnomish::Genotype</font></font></p>
+<p class="western">This class defines the individuals in a population.</p>
+<p class="western" style=""><b>Note:</b><span style=""> In the code to
+this point, we refer to 'genotype' as an individual of a genome that
+belongs to a population.  However,  when we release the code to a more
+general audience, we will likely want to change this to something more
+generic like 'individual'.  (This is because human and animal genetics
+researchers refer to 'genotype' as the gene sequence of an individual,
+not the individual.)</span><br>
+<br>
+Also, there is currently no concept of sex.<br>
+<br>
+There are also a number of things that are slightly different from the
+way that Nick's original Gregor works.  Nick defined a number of
+genotype creation methods, such as 'solid alleles' and 'heterozygous
+complete coupling' that do not easily translate to our model in
+Gnomish.  In Gregor, alleles are defined to have a value of either '1'
+or '0'; these create methods assume that alleles can have only one of
+two values.  However, Gnomish allows an arbitrary number of alleles,
+each allele can be in the range of 'a-z, A-Z, 0-9'.  If we decide to
+provide create methods that are analogous to those in Gregor, we will
+need to define new behavior for them.</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>makeHomozygousGenotype</b></p>
+<p class="western" style="">Create a new genotype with alleles
+homozygous for a provided value.  Provided allele must be valid for the
+genome.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Character:Allele</p>
+	</li>
+  <li>
+    <p class="western" style="">Genome</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = new Gnomish::Genotype;<br>
+&nbsp;&nbsp;&nbsp; $genotype-&gt;makeHomozgousGenotype ( Genome =&gt;
+$genome,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+Allele =&gt; 'a' );</p>
+<p class="western"><br>
+<br>
+<b>makeWithSelfCrossedParent</b></p>
+<p class="western" style="">Create a new genotype with a self-crossed
+parent.  In this method, meiosis is performed on the genotype, and the
+resulting haploid is simply doubled  to create a new offspring.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genotype: Parent</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = new Gnomish::Genotype;<br>
+&nbsp;&nbsp;&nbsp; $genotype-&gt;makeWithSelfCrossedParent ( Parent
+=&gt; \$p );</p>
+<p class="western"><br>
+<br>
+</p>
+<p class="western"><b>makeWithParents</b></p>
+<p class="western" style="">Create a new genotype from two parent
+genotypes.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genotype: Parent1</p>
+	</li>
+  <li>
+    <p class="western" style="">Genotype: Parent2</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = new Gnomish::Genotype;<br>
+&nbsp;&nbsp;&nbsp; $genotype-&gt;makeWithParents ( Parent1 =&gt; \$p1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Parent2 =&gt; \$p2 );</p>
+<p class="western"><br>
+<br>
+</p>
+<p class="western"><b>makeToSpec</b></p>
+<p class="western" style="">Create a new genotype, given its allele
+strings and genome.  This method is useful for loading genotypes from
+persistent storage, such as a database.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genome</p>
+	</li>
+  <li>
+    <p class="western" style="">String: 	AlleleString0</p>
+	</li>
+  <li>
+    <p class="western" style="">String: 	AlleleString1</p>
+	</li>
+  <li>
+    <p class="western" style="">GenotypicValues: 	reference to a hash
+object that contains the genotypic values for 	each trait in the
+genotype's genome. (optional)</p>
+	</li>
+  <li>
+    <p class="western" style="">PhenotypicValues: 	reference to a hash
+object that contains the phenotypic values for 	each trait in the
+genotype's genome. (optional)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my %phenotypic_values = ( "Height" =&gt; 67.3,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; "Hardiness" =&gt; 50.5 );</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my %genotypic_values = ( "Height" =&gt; 60.1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;"Hardiness" =&gt; 59.2 );</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $allele_string0 = "aabbcc";<br>
+&nbsp;&nbsp;&nbsp; my $allele_string1 = "ccaadd";</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = new Gnomish::Genotype;<br>
+&nbsp;&nbsp;&nbsp; $genotype-&gt;makeToSpec ( Genome =&gt; $genome,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; AlleleString0 =&gt; $allele_string0,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; AlleleString1 =&gt; $allele_string1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; PhenotypicValues =&gt; \%phenotypic_values,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; GenotypicValues =&gt; \%genotypic_values );</p>
+<p class="western"><br>
+<br>
+<b>makeRandomAlleleGenotype</b></p>
+<p class="western" style="">Initialize genotype with randomly generated
+allele strings.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genome: Genome</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = new Gnomish::Genotype;<br>
+&nbsp;&nbsp;&nbsp; $genotype-&gt;makeRandomAlleleGenotype ( Genome
+=&gt; $genome );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>makeRandomHomozygousGenotype</b></p>
+<p class="western" style="">Initialize the genotype with a randomly
+chosen allele at each locus.  The same allele is assigned to both
+allele strings.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genome: Genome</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = new Gnomish::Genotype;<br>
+&nbsp;&nbsp;&nbsp; $genotype-&gt;makeRandomHomozygousGenotype ( Genome
+=&gt; $genome );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>getName</b></p>
+<p class="western" style="">Return the name of the genotype (if one has
+already been assigned).</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $name = $genotype-&gt;getName();</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getGenomeName</b></p>
+<p class="western" style="">Return the name of the genome that the
+genotype belongs to.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genome_name = $genotype-&gt;getGenomeName();</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getGenome</b></p>
+<p class="western" style="">Return a copy of the genotype's genome.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genome = $genotype-&gt;getGenome();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>getGenomeRef</b></p>
+<p class="western" style="">Return a reference to the genotype's genome
+object.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genome_ref = $genotype-&gt;getGenomeRef();</p>
+<p class="western"><br>
+</p>
+<p class="western"><b>getLocusState</b></p>
+<p class="western" style="">Return the locus state at a particular
+locus.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Locus</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $locus_state = $genotype-&gt;getLocusState ( Locus =&gt; 2 );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getFragment</b></p>
+<p class="western" style="">Return a string consisting of a range of
+locus states between the start locus and the stop locus.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: StartLocus</p>
+	</li>
+  <li>
+    <p class="western" style="">Int: StopLocus</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $locus_states = $genotype-&gt;getFragment ( StartLocus =&gt; 2,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; StopLocus =&gt; 6 );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getGamete</b></p>
+<p class="western" style="">Return the specified allele string from the
+genotype as a comma separated string.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Gamete 	(valid value of either '0'
+or '1')</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $allele_string0 = $genotype-&gt;getGamete ( Gamete =&gt; 0 );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getGameteAsArray</b></p>
+<p class="western" style="">Return the specified allele string from the
+genotype in an array.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Gamete 	(valid value of either '0'
+or '1')</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my @allele_string0 = $genotype-&gt;getGameteAsArray ( Gamete =&gt; 0 );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>drawInAscii</b></p>
+<p class="western" style="">Print the name and allele strings of the
+genotype to screen.  This is mostly here for debugging purposes.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$genotype-&gt;drawInAscii();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>computeGenotypicValues</b></p>
+<p class="western" style="">Compute the genotypic value for each trait
+of the genotype's genome.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$genotype-&gt;computeGenotypicValues();</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getGenotypicValueForTrait</b></p>
+<p class="western" style="">Return the genotypic value for a particular
+trait in the genotype's genome.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">String: TraitName</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $v = $genotype-&gt;getGenotypicValueForTrait ( TraitName =&gt;
+"Height" );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>computePhenotypicValues</b></p>
+<p class="western" style="">Compute the phenotypic value for each trait
+of the genotype's genome.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$genotype-&gt;computePhenotypicValues();</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getPhenotypicValueForTrait</b></p>
+<p class="western" style="">Return the phenotypic value for a
+particular trait in the genotype's genome.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">String: TraitName</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $v = $genotype-&gt;getPhenotypicValueForTrait ( TraitName =&gt;
+"Height" );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>getTraitNames</b></p>
+<p class="western" style="">Return an array of trait names of all
+traits that belong in the genotype's genome.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my @trait_names = $genotype-&gt;getTraitNames();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+</body>
+</html>

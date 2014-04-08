@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title>Gnomish Tutorial</title>
+</head>
+<body lang="en-US">
+<br>
+<h1 style="text-align: center;"><b>Gnomish Tutorial v0.1</b></h1>
+<br>
+<p style="margin-bottom: 0cm;"><b>Getting started</b></p>
+<p style="margin-bottom: 0cm;">This tutorial assumes previous
+programming experience and some knowledge of the Perl programming
+language. For introductory texts on Perl, the reader is referred to the
+following texts:</p>
+<ul>
+	<li>Randal Schwartz, Tom Phoenix, "Learning Perl, 3<sup>rd</sup> ed.",
+	O'Reilly &amp; Associates, 2001. (ISBN: 0-596-00132-0) 	</li>
+  <li>James 	Tisdall, "Beginning Perl for Bioinformatics", O'Reilly
+&amp; 	Associates, 2001. (ISBN: 0-596-00080-4) </li>
+</ul>
+<p style="margin-bottom: 0cm;">Those with previous programming
+experience will find the following texts useful:</p>
+<ul>
+	 <li>Larry 	Wall, Tom Christiansen, Jon Orwant, "Programming Perl, 3<sup>rd</sup>
+	ed.", O'Reilly &amp; Associates, 2000. (ISBN: 0-596-00027-8)</li>
+  <li>Johan 	Vromans, "Perl Pocket Reference, 4<sup>th</sup> ed.",
+	O'Reilly &amp; Associates, 2002. (ISBN: 0-596-00374-9) 	</li>
+  <li>Sriram 	Srinivasan "Advanced Perl Programming", O'Reilly &amp;
+	Associates, 1997.      (ISBN: 1-56592-220-4) </li>
+</ul>
+<p style="margin-bottom: 0cm;">Also, the website: <a
+ href="http://www.perl.com/">http://www.perl.com</a> contain lots of
+useful information about Perl and how to download your own copy of the
+language.</p>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm;"><b>General concepts in Gnomish</b></p>
+<p style="margin-bottom: 0cm;">The Gnomish genetic simulator engine is
+logically structured as a collection of Perl modules, each having a
+specific function.  Gnomish modules are broken down as follows:</p>
+<ul>
+	<li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Population</b><span
+ style=""> 	 Functions and data structures that operate on a collection
+of 	individuals in a population.</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Genotype</b><span
+ style=""> 	  The encapsulation of an individual in a population.  (This
+module 	will likely be renamed to make it's name more consistent with
+how 	animal biologists use the tern 'genotype'.)</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Genome</b><span style="">
+	 Functions and data structures that encapsulates the genome of a
+	population.</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Marker</b><span style="">
+	 The encapsulation for gene markers in the genome.</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Trait</b><span style="">
+	 The encapsulation for traits in the genome.</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Evaluations</b><span
+ style=""> 	 Routines for performing selections on a population.</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::DB</b><span style=""> 	
+Routines for interacting with a database.</span></p>
+	</li>
+  <li>
+    <p style="margin-bottom: 0cm;"><b>Gnomish::Stdlib</b><span style="">
+	 Miscellaneous utility routines.</span></p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm;"><br>
+</p>
+<p style="margin-bottom: 0cm; page-break-before: always;"><b>Tutorial
+1: Hardy-Weinberg Equilibrium test in Gnomish </b> </p>
+<p style="margin-bottom: 0cm;">The Hardy-Weinberg states that, under
+random mating, the frequency of genotypes should be equal to the
+products of the allele frequencies.</p>
+<p style="margin-bottom: 0cm;">The model: We have a very simple genome
+with a single locus.  We start with a population that is not random
+mating, and contains an unequal number of alleles.  The population could
+be made by merging two sub-populations: A) a population of 100 genotypes
+that are completely homozygous for the "a" allele, and B) a population
+of 900 genotypes that are completely homozygous for the "b" allele.
+Thus, the merged population has 1000 genotypes.  We then subjet this
+population to a single generation of random mating:  1000 new genotypes
+will be produced by random crosses among the original 1000.</p>
+<p style="margin-bottom: 0cm;">In our original population, allele
+numbers are:</p>
+<p style="margin-bottom: 0cm;">n("a") = 2 * 100 = 200 (i.e. two of each
+because genotypes are diploid)<br>
+n("b") = 2 * 900 = 1800</p>
+<p style="margin-bottom: 0cm;">Thus, allele frequencies are:</p>
+<p style="margin-bottom: 0cm;">f("a") = 200/2000 = 0.1<br>
+f("b") = 1800/2000 = 0.9</p>
+<p style="margin-bottom: 0cm;">Thus, predicted genotype frequencies are:</p>
+<p style="margin-bottom: 0cm;">f("aa") = 0.1 * 0.1 = 0.01<br>
+f("ab") + f("ba") = 2 * 0.1 * 0.9 = 0.18<br>
+f("bb") = 0.9 * 0.9 = 0.81</p>
+<p style="margin-bottom: 0cm;">(note that these frequencies add to 1)</p>
+<p style="margin-bottom: 0cm;">This is definitely not the case in the
+original population, because there are no heterozygous genotypes.  We
+will test if these expected frequencies are observed after one
+generation of random mating.</p>
+<p style="margin-bottom: 0cm; font-weight: bold;"><br>
+The Simulation:</p>
+<p style="margin-bottom: 0cm;">At the beginning of each simulation, we
+need to load the appropriate Perl and Gnomish modules:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Load the Perl module
+that enforces strict syntax checking</span><br
+ style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># and scoping rules</span><br>
+use strict; </font> </p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Load Gnomish Perl
+modules</span><br>
+use Gnomish::Population;<br>
+use Gnomish::Genotype;<br>
+use Gnomish::Genome;<br>
+use Gnomish::Stdlib;<br>
+use Gnomish::Evaluations;</font></p>
+<p style="margin-bottom: 0cm;"> <br>
+Next, we need to initialize the Perl random number generator.  The
+Gnomish::Stdlib module provides exactly such a routine. </p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Initialize the random
+number generator.</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># Make sure that this is executed
+at the</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># beginning of every script!</span><br>
+initialize();</font></p>
+<p style="margin-bottom: 0cm;"><br>
+Before we can generate new populations for the experiment, we need to
+define their characteristics. Generally speaking, when creating a new
+population from scratch, objects need to be created in the following
+order:</p>
+<ol>
+	<li>Create a new genome.</li>
+  <li>Create a new, empty population 	object.</li>
+  <li> 	 Create a new genotype, add 	genotype to the population object</li>
+  <li> 	 Repeat step 3 N times.</li>
+</ol>
+<br>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># First, create a genome
+object.</span><br>
+my $genome = new Gnomish::Genome;</font></p>
+<p style="margin-bottom: 0cm;">Gnomish is logically implemented using
+Perl modules, either encapsulated as a Perl class object, or simply as a
+library function.  In Gnomish, anything that can be thought of as a
+'thing' is an object.  Functions that operate upon the internal data
+structures of this 'thing' are implemented as class methods.  In this
+fashion, the class method 'makeGenome' defines the properties of the
+genome.</p>
+<p style="margin-bottom: 0cm;">Unlike other programming languages,
+function call parameters in Perl can either take the form of a regular
+list similar to:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">function_name ( $first_parameter, $second_parameter, ... );</font></p>
+<p style="margin-bottom: 0cm;">This form is more concise, however it is
+much more error prone, because there is no type checking in Perl. Perl
+also has a mechanism that allows parameters to be explicitly named,
+which takes on the following form:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">function_name ( FirstParameter =&gt; $first_parameter,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; SecondParameter =&gt; $second_parameter, ... );</font></p>
+<p style="margin-bottom: 0cm;">When written this way, parameters can be
+ordered in any order.  The following function call is therefore
+identical to the above:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">function_name ( SecondParameter =&gt; $second_parameter,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; FirstParameter =&gt; $first_parameter, ... );</font></p>
+<p style="margin-bottom: 0cm;">For a more thorough discussion of this
+topic, please refer to "Programming Perl", by Larry Wall, et al.</p>
+<p style="margin-bottom: 0cm;"><br>
+Thus, we define the properties of our new genome:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Define a genome with a
+single locus.</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># Since there is only one locus,
+the recombination</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># distance array is empty</span><br>
+$genome-&gt;makeGenome (Name =&gt; "HW",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Nloci =&gt; 1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+RecombinationDists =&gt; "",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleSet =&gt;
+"a,b");</font></p>
+<p style="margin-bottom: 0cm;"> <br>
+Next, we need to define a population. &nbsp;According to the steps
+listed above, we would need to create new individuals one-at-a-time and
+add each to their corresponding population. &nbsp;However, this method
+can get a little cumbersome, particularly when a large population of
+identical individuals is required.  To overcome this, the
+Gnomish::Population module provides a number of utility routines to
+perform these tasks. (Please refer to the documentation for
+Gnomish::Population.) In our case, we want to create a population of 100
+genotypes at are completely homozygous for the '<b>a</b>' allele.</p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"><br>
+<font style="font-family: monospace;"><font size="2"><span
+ style="color: rgb(0, 102, 0);"># Make a population of 100 genotypes
+that are completely</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># homozygous for the 'a' allele</span><br>
+my $p0 = makeHomozygousPopulation (NMembers =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Genome =&gt;
+$genome,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Allele =&gt;
+"a");</font></font></p>
+<p style="margin-bottom: 0cm;"> <br>
+The function 'makeHomozygousPopulation' is a Gnomish::Population module
+function that automates the process of creating new homozygous
+populations. In this case, we created a new population of 100 members
+with the genome '$genome' which are homozygous for the allele '<b>a</b><span
+ style="">'.  The result is a new population object, '$p0'.</span></p>
+<p style="margin-bottom: 0cm;">Again, we create a second population of
+900 individuals that are homozygous for the '<b>b</b>' allele.</p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <font
+ face="Nimbus Mono L"><font size="2"><span style=""><br>
+</span></font></font><font size="2"><span style=""><span
+ style="color: rgb(0, 102, 0); font-family: monospace;"># Make a
+population of 900 genotypes that are completely</span></span><br
+ style="color: rgb(0, 102, 0); font-family: monospace;">
+<span style="color: rgb(0, 102, 0); font-family: monospace;">#
+homozygous for the 'b' allele</span><br
+ style="color: rgb(0, 102, 0); font-family: monospace;">
+<span style="font-family: monospace;">my $p1 = makeHomozygousPopulation
+(NMembers =&gt; 900,</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Genome =&gt; $genome,</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Allele =&gt; "b");</span></font></p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <br>
+</p>
+<p style="margin-bottom: 0cm;">To create a single population of
+individuals that are homozygous for the '<b>a</b><span style="">' allele
+and the '</span><b>b</b><span style="">' allele with a ratio of 1:9, we
+merge them, creating a new population.</span></p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <font
+ face="Nimbus Mono L"><font size="2"><br>
+</font></font><font size="2"><span
+ style="font-family: monospace; color: rgb(0, 102, 0);"># create a
+merged (f1) population of these two</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">my $f1 = mergePopulations (Pop1
+=&gt; \$p0, Pop2 =&gt; \$p1);</span></font></p>
+<p style="margin-bottom: 0cm;"> <br>
+Note that unlike the variables being passed into functions so far, the
+two variables '$p0' and '$p1' are preceded by a backslash in the above
+function call to 'mergePopulations'. This is because '$p0' and '$p1' are
+being passed by <b>reference</b><span style="">.  In Gnomish,
+functions that operate upon complex objects, such as population objects
+that may have lots of nested data, passing parameters by reference
+avoids the need to make unnecessary copies of the object being passed.
+Gnomish functions and subroutines which expect references instead of
+copies of the original object are designed to detect when they have
+received a copy instead of a reference and issue the appropriate error
+message. (Please see "Programming Perl" for a more detailed discussion
+of this topic.)</span></p>
+<p style="margin-bottom: 0cm;">Next, we subject the merged population
+to one generation of random mating.</p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <font
+ face="Nimbus Mono L"><font size="2"><br>
+</font></font><font size="2"><span
+ style="font-family: monospace; color: rgb(0, 102, 0);"># Subject the
+merged population to one generation</span><br
+ style="font-family: monospace; color: rgb(0, 102, 0);">
+<span style="font-family: monospace; color: rgb(0, 102, 0);"># of
+random mating, creating a new population of 1000 members</span><br
+ style="font-family: monospace; color: rgb(0, 102, 0);">
+<span style="font-family: monospace; color: rgb(0, 102, 0);"># that
+replaces the original parent (F1) population.</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">my $f2 = randomMate (ParentPop
+=&gt; \$f1, NProgeny =&gt; 1000);</span></font></p>
+<p style="margin-bottom: 0cm;"><br>
+We now begin the analysis of our population! The Gnomish::Evaluations
+module has a function that can be used to count the number of times each
+allele state appears in the genotype of each individual in a
+population. The result is returned as a Perl hash object.</p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <font
+ face="Nimbus Mono L"><font size="2"><br>
+</font></font><font size="2"><span
+ style="font-family: monospace; color: rgb(0, 102, 0);"># Count the
+occurrence of allele states 'aa', 'ab', and 'bb'</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">my %allele_states_count =
+countAlleleStatesInPopulation ( Population =&gt; \$f2 );</span></font></p>
+<p style="margin-bottom: 0cm;"><br>
+In Perl, hash objects are extremely useful entities that can be thought
+of as an array that is keyed by value instead of by an index.  For
+example, if we have an association that maps the word 'dog' to the word
+'canine' and 'cat' to 'feline', we can simply express it as a Perl hash
+in the following manner:</p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <font
+ face="Nimbus Mono L"><font size="2"><br>
+</font></font><font size="2"><span style="font-family: monospace;">my
+%animals; <span style="color: rgb(0, 102, 0);"># create a new Perl hash</span></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">$animals{"dog"} = "canine";</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">$animals{"cat"} = "feline";</span></font></p>
+<p style="margin-bottom: 0cm;"><br>
+Once a hash object has been built, it can be accessed by using the
+correct symbolic key:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">print $animals{"dog"};</font></p>
+<p style="margin-bottom: 0cm;"> The output would thus be:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">&gt; canine</font></p>
+<p style="margin-bottom: 0cm;"> <br>
+Therefore, to report on the occurrence of allele states and their
+relative frequencies, we can iterate over the '%allele_states_count'
+hash, and compute the required values:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"><font
+ size="2"><span style="color: rgb(0, 102, 0);"># Get the number of
+members found in the '$f2' population.</span><br>
+my $members = $f2-&gt;nMembers(); </font> </p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Calculate the
+frequencies of each allele state and display</span><br>
+print "Population Members: $members\n";<br>
+foreach my $state (keys %allele_states_count)<br>
+{&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; my $freq = $allele_states_count{$state} / $members;</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">&nbsp;&nbsp;&nbsp; print "Allele state: $state, <br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; total:
+					$allele_states_count{$state}, <br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; frequency:
+$freq\n";<br>
+}</font></p>
+<p style="margin-bottom: 0cm;"> <br>
+The simulation script is now complete! We have generated an F1
+population, performed random mating upon it, and reported on the
+results. Executing this script, we should get output similar to this:</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">&gt; perl hardy-weinberg.pl<br>
+Population Members: 1000<br>
+Allele state: ba, total: 175, frequency: 0.175<br>
+Allele state: bb, total: 813, frequency: 0.813<br>
+Allele state: aa, total: 12, frequency: 0.012</font></p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <br>
+</p>
+<hr style="width: 100%; height: 2px;">
+<p style="margin-bottom: 0cm; page-break-before: always;"><b>The
+complete script:</b></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace; color: rgb(0, 102, 0);"> <font
+ size="2"># Hardy-Weinberg Equilibrium test</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Load the Perl module
+that enforces strict syntax checking</span><br
+ style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># and scoping rules.</span><br>
+use strict;</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Load Gnomish Perl
+modules.</span><br>
+use Gnomish::Population;<br>
+use Gnomish::Genotype;<br>
+use Gnomish::Genome;<br>
+use Gnomish::Stdlib;<br>
+use Gnomish::Evaluations;</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Initialize the random
+number generator.</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># Make sure that this is executed
+at the</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># beginning of every script!</span><br>
+initialize();</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># First, create a genome
+object.</span><br>
+my $genome = new Gnomish::Genome;</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Define a genome with a
+single locus.</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># Since there is only one locus,
+the recombination</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># distance array is empty</span><br>
+$genome-&gt;makeGenome ( Name =&gt; "HW",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Nloci =&gt; 1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+RecombinationDists =&gt; "",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AlleleSet =&gt;
+"a,b" );</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <br>
+<font size="2"><span style="color: rgb(0, 102, 0);"># Make a population
+of 100 genotypes that are completely</span><br
+ style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># homozygous for the 'a' allele</span><br>
+my $p0 = makeHomozygousPopulation ( NMembers =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Genome =&gt;
+$genome,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Allele =&gt;
+"a");</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <br>
+<font size="2"><span style="color: rgb(0, 102, 0);"># Make a population
+of 900 genotypes that are completely</span><br
+ style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># homozygous for the 'b' allele</span><br>
+my $p1 = makeHomozygousPopulation ( NMembers =&gt; 900,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Genome =&gt;
+$genome,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Allele =&gt;
+"b");</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2">			</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Create a merged
+population of these two</span><br>
+my $f1 = mergePopulations (Pop1 =&gt; \$p0, Pop2 =&gt; \$p1);</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Subject the merged
+population to one generation of</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># random mating, creating a new
+population of 1000 members</span><br style="color: rgb(0, 102, 0);">
+<span style="color: rgb(0, 102, 0);"># that replaces the original
+parent (F1) population.</span><br>
+my $f2 = randomMate (ParentPop =&gt; \$f1,  NProgeny =&gt; 1000);</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Count the occurrence
+of allele states 'aa', 'ab', and 'bb'</span><br>
+my %allele_states_count = countAlleleStatesInPopulation (<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Population =&gt; \$f2 );</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <br>
+</p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Get the number of
+members found in the '$f2' population.</span><br>
+my $members = $f2-&gt;nMembers();</font></p>
+<p
+ style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm; font-family: monospace;"> <font
+ size="2"><span style="color: rgb(0, 102, 0);"># Calculate the
+frequencies of each allele state and display</span><br>
+print "Population Members: $members\n";<br>
+foreach my $state (keys %allele_states_count)<br>
+{<br>
+&nbsp;&nbsp;&nbsp; my $freq = $allele_states_count{$state} / $members;<br>
+&nbsp;&nbsp;&nbsp; print "Allele state: $state,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; total:
+$allele_states_count{$state},<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; frequency:
+$freq\n";<br>
+}<br>
+<br>
+</font></p>
+<p style="margin-left: 0.2cm; margin-right: 0.2cm; margin-bottom: 0cm;"> <br>
+</p>
+</body>
+</html>

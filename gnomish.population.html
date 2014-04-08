@@ -1,0 +1,513 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=iso-8859-1">
+  <title></title>
+	 	
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.2  (Linux)">
+	
+  <meta name="CREATED" content="20030305;10233600">
+	
+  <meta name="CHANGED" content="20030306;14553300">
+	
+  <style>
+	<!--
+		@page { margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
+		P { margin-bottom: 0.21cm }
+		P.western { font-family: "Helvetica", sans-serif; font-weight: medium }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+<h1> <font face="Arial, sans-serif"><font size="4">Gnomish::Population</font></font></h1>
+<p class="western"><font face="Helvetica, sans-serif">This module
+incorporates both the class definition for the Population class and
+regular functions for operations on population objects.</font></p>
+<p class="western"><br>
+</p>
+<h1> <font face="Arial, sans-serif"><font size="4">Functions that
+operate on Population Objects</font></font></h1>
+<p class="western">These functions exist external to the Population
+class definitions.</p>
+<p class="western"><br>
+</p>
+<p class="western"><b>doubledHaploids</b></p>
+<p class="western" style="">Make a new population from a parent
+population, where one or more doubled haploid progeny is created.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NProgeny 	(number of progeny to
+create per parent in the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $parent_pop = new Gnomish::Population;<br>
+&nbsp;&nbsp;&nbsp; $parent_pop-&gt;makePopulation ( NMembers =&gt; 1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; CreateMethod =&gt;
+"RANDOM_ALLELE",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; Genome =&gt; $genome );</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = doubledHaploids ( NProgeny =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ParentPop
+=&gt; \$parent_pop );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>selfedProgeny</b></p>
+<p class="western" style="">Create a new population in which each
+parent in the parent population is crossed with itself one or more
+times.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NProgeny 	(number of progeny to
+create per parent in the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = selfedProgeny ( NProgeny =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; ParentPop =&gt;
+\$parent_pop );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>clonalProgeny</b></p>
+<p class="western" style="">Create a new population in which each
+parent is cloned one or more times.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NProgeny 	(number of progeny to
+create per parent in the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = clonalProgeny ( NProgeny =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; ParentPop =&gt;
+\$parent_pop );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>singleSeedDescent</b></p>
+<p class="western" style="">Perform N generations of single seed
+descent.  This function creates one selfed progengy for each member of
+the parent population (F1 generation).  Then each member in the new
+population is replaced by one of its selfed progeny. The process is
+repeated until N generations have been reached.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NGenerations 	(number of
+generations)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = singleSeedDescent ( NGenerations =&gt; 20,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+ParentPop =&gt; \$parent_pop );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>randomMate</b></p>
+<p class="western" style="">Randomly mate genotypes in the population,
+creating new population.   Take existing population, make a new
+population by crossing random parents from the existing population. 
+Each cross results in one new member of the the new population.</p>
+<p class="western" style="">Note that parent selection is completely
+random, that is a parent can be crossed with itself, or selected for
+crossing more than once.  If there is only one parent individual in the
+parent population, the result is a selfed population of N progenies.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NProgeny 	(number of progenies in
+the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = randomMate ( NProgeny =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; ParentPop =&gt; \$parent_pop );</p>
+<p class="western"><b><br>
+chainCrosses</b></p>
+<p class="western" style="">Create a new population by sequentially
+crossing members of the population.  This procedure crosses the first
+individual with the second, the second with the third, etc.  The last
+individual is crossed with the first so that the number of crosses made
+is equal to the number of individuals in the parental population.  One
+progeny is made from each cross.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = chainCrosses ( ParentPop =&gt; \$parent_pop );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>fullDiallel</b></p>
+<p class="western" style="">Create a new population in which every
+individual is crossed with every others in the population, including
+itself.  This function is essentially a version of 'NC_DesignII' (see
+below), but on a single population.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Population: 	ParentPop (reference to
+the parent population -- this population 	must have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = fullDiallel ( ParentPop =&gt; \$parent_pop );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>NC_DesignII</b></p>
+<p class="western" style="">This mates all individuals in one
+population with all members of another population, making one progeny
+from each cross. </p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Population: 	ParentPop1 (reference to a
+parent population -- this population must 	have at least one member)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	ParentPop2 (reference to a
+parent population -- this population must 	have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = NC_DesignII ( ParentPop1 =&gt; \$p1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ParentPop2 =&gt; \$p2 );</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>backCrosses</b></p>
+<p class="western" style="">This performs crosses between all
+individuals in one population (the donor population) and a single
+individual (the recurent parent) in a second population. One or more
+progenies can be produced from each cross.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genotype: 	RecurentParent (reference to
+the recurrent parent)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: 	DonorPop (reference to the
+donor population -- this population must 	have at least one member)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $new_pop = backCrosses ( RecurrentParent =&gt; \$genotype,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; DonorPop =&gt; \$donor_population
+);</p>
+<p class="western" style=""><br>
+</p>
+<p class="western"><b>mergePopulations</b></p>
+<p class="western" style="">Merge two specified populations, return a
+new population object with the two parent population merged.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Population: Pop1 	(reference to a
+population object)</p>
+	</li>
+  <li>
+    <p class="western" style="">Population: Pop2 	(reference to a
+population object)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $merged_pop = mergePopulation ( Pop1 =&gt; \$p1,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+Pop2 =&gt; \$p2 );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>makeRandomAllelePopulation</b></p>
+<p class="western" style="">Create a random population from scratch
+with random alleles.  With this creation method, a random allele is
+chosen and assigned to each locus on each allele string in the genotype.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NMembers 	(number of genotypes in
+the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Genome: Genome 	(genome that the
+population will belong to)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $population = makeRandomAllelePopulation ( NMembers =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; Genome
+=&gt; $genome );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>makeRandomHomozygousPopulation</b></p>
+<p class="western" style="">Create a new population with randomly
+chosen homozygous alleles.  In this case, at each locus, a random
+allele is chosen.  This allele is then assigned to  both allele strings
+(gametes) in the genotype.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NMembers 	(number of genotypes in
+the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Genome: Genome 	(genome that the
+population will belong to)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $population = makeRandomHomozygousPopulation ( NMembers =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; Genome =&gt; $genome );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>makeHomozygousPopulation</b></p>
+<p class="western" style="">Create a new population with alleles
+homozygous to the specified allele.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: NMembers 	(number of genotypes in
+the new population)</p>
+	</li>
+  <li>
+    <p class="western" style="">Genome: Genome 	(genome that the
+population belongs to)</p>
+	</li>
+  <li>
+    <p class="western" style="">Char: Allele 	(allele to assign to the
+genotypes in the population)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $population = makeHomozygousPopulation ( NMembers =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Genome =&gt;
+$genome,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Allele =&gt;
+"a" );</p>
+<p class="western" style=""><br>
+</p>
+<hr style="width: 100%; height: 2px;">
+<h1> <font face="Arial, sans-serif"><font size="4">Population Class
+methods</font></font></h1>
+<p class="western"><b>makePopulation</b></p>
+<p class="western" style="">Create new population and populate using
+the specified create method.</p>
+<p class="western" style="">Parameters</p>
+<ul>
+	<li>
+    <p class="western" style="">String: Name 	(optional)</p>
+	</li>
+  <li>
+    <p class="western" style="">Int: NMembers 	(number of genotypes to
+create in the population)</p>
+	</li>
+  <li>
+    <p class="western" style="">CreateMethod 	(creation rule used to
+create new genotypes in the population. 	Please refer to the
+documentation for 	Gnomish::Genotype::makeGenotype)</p>
+	</li>
+  <li>
+    <p class="western" style="">Genome: Genome 	(genome that members of
+the population belong to)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $pop = new Gnomish::Population;<br>
+&nbsp;&nbsp;&nbsp; $pop-&gt;makePopulation ( Name =&gt;
+"ExamplePopulation",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+NMembers =&gt; 100,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+CreateMethod =&gt; "RANDOM_ALLELE",<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+Genome =&gt; $genome );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>setName</b></p>
+<p class="western" style="">Set the population name.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">String: Name</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$pop-&gt;setName ( Name =&gt; "NewPopulationName" );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>getName</b></p>
+<p class="western" style="">Return the name of the population.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $pop_name = $pop-&gt;getName();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>nMembers</b></p>
+<p class="western" style="">Return the number of members in the
+population.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $n = $pop-&gt;nMembers();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>addMember</b></p>
+<p class="western" style="">Add a new genotype to the population.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Genotype: 	Genotype (reference to a
+genotype that is being added to the 	population)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$pop-&gt;addMember ( Genotype =&gt; \$genotype );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>getMemberRef</b></p>
+<p class="western" style="">Return a reference to a particular member
+of the population.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Member 	(index of a particular
+member of the population)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype_ref = $pop-&gt;getMemberRef ( Member =&gt; 10 );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>getMember</b></p>
+<p class="western" style="">Return a copy of a particular member of the
+population.</p>
+<p class="western" style="">Parameters:</p>
+<ul>
+	<li>
+    <p class="western" style="">Int: Member 	(index of a particular
+member of the population)</p>
+  </li>
+</ul>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+my $genotype = $pop-&gt;getMember ( Member =&gt; 10 );</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>shuffle</b></p>
+<p class="western" style="">Randomly shuffle the members in the
+population.</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$pop-&gt;shutffle();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+<p class="western"><b>computePhenotypes</b></p>
+<p class="western" style="">Compute the phenotypic values for each
+genotype in the population. (This method iterates over every genotype
+in the population and calls the genotype's <b>computePhenotypicValue</b>
+method. Please refer to the documentation for 
+Gnomish::Genotype::computePhenotypicValue for more information.)</p>
+<p class="western" style="">Parameters: none</p>
+<p class="western" style="">Example:</p>
+<p class="western" style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+$pop-&gt;computePhenotypes();</p>
+<p class="western" style=""><br>
+<br>
+</p>
+</body>
+</html>
